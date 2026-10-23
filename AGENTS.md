@@ -156,7 +156,8 @@ export PAGER=cat GIT_PAGER=cat          # 关闭分页器
 - ❌ `pkill -f "string"` / `pkill "string"` / `killall name`
   - `-f` 会匹配整条命令行；执行该命令的 shell 自身的命令行里往往就包含这个 `string`，于是 **pkill 把发起它的 shell（或自己的父进程）也杀掉**，命令表现为“卡死”或会话中断。
   - ❌ `kill 0`（杀掉整个进程组，含自己）、`kill -9 -1`（杀掉该用户所有进程）、`pkill -9 -f .`
-  - ✅ 正确做法：先 `ps`/`pgrep` 看清 PID，再 `kill <具体PID>`；或用精确匹配 `pkill -x <name>`，并避免在命令串里直接写目标字符串（可借助 `[s]tring` 写法）。
+  - ✅ 正确做法：先 `ps`/`pgrep` 看清 PID，再单独运行另一个工具调用 `kill <具体PID>`；或用精确匹配 `pkill -x <name>`，并避免在命令串里直接写目标字符串（可借助 `[s]tring` 写法）。
+  - ❌ 不要把pgrep和kill放在同一个命令中，因为pgrep匹配到自身以后输出的PID直接被kill获取导致卡死，一定要先运行pgrep观察输出，包含多个PID时仔细区分后再kill。
 - ❌ `ps aux | grep foo` —— 结果里永远包含 `grep foo` 自己，容易误判/误杀；改 `pgrep -fl foo`。
 
 ### 3.2 等待 stdin / 交互输入（永不返回）
